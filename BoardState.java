@@ -9,7 +9,7 @@ import java.util.*;
 public class BoardState {
     public int size;                    // ukuran papan (size x size)
     public int[][] grid;                // grid angka dari puzzle (-1 untuk kosong)
-    public List<int[]> variables;       // posisi sel yang belum pasti [[row1,col1], [row2,col2], ...]
+    public List<int[]> variables;       // posisi sel yang belum pasti warna putih atau hitam [[row1,col1], [row2,col2], ...]
     public boolean[][] white;           // true jika sel pasti putih
     public boolean[][] black;           // true jika sel pasti hitam  
     public List<int[]> constraints;     // angka-angka constraint [[row,col,number], ...]
@@ -63,7 +63,7 @@ public class BoardState {
         showInfo();
     }
     
-    // tandai sel angka sebagai putih
+    // mencari constraints dari hasil konversi input
     private void findNumberCells() {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -82,7 +82,7 @@ public class BoardState {
     
     // tandai tetangga angka 0 sebagai putih
     private void markZeroNeighbors(int row, int col) {
-        // periksa semua 8 arah sekitar angka 0
+        // periksa semua 8 arah sekitar angka 0 dan angka 0 itu sendiri
         for (int dr = -1; dr <= 1; dr++) {
             for (int dc = -1; dc <= 1; dc++) {
                 int newRow = row + dr;
@@ -109,7 +109,7 @@ public class BoardState {
             for (int dr = -1; dr <= 1; dr++) {
                 for (int dc = -1; dc <= 1; dc++) {
                     int newRow = row + dr;
-                    int newCol = col + dc;
+                    int newCol = col + dc; 
                     if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
                         // jika belum putih, bisa jadi hitam
                         if (!white[newRow][newCol]) {

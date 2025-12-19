@@ -7,24 +7,28 @@ import java.util.*;
  */
 public class Main {
     public static void main(String[] args) {
-        String filename = null;
-        int populationSize = 0;
-        long seed = 0;
+        String filename = null; // nama file input
+        int populationSize = 0; // ukuran populasi
+        long seed = 0;          // masukkan untuk seed
 
-        if (args.length == 1) {
-            // hanya filename, maka error butuh seed
-            System.err.println("Error: Seed harus disertakan");
-            System.exit(1);
-        } else if (args.length == 2) {
-            // filename + seed (population size default)
-            filename = args[0];
-            seed = Long.parseLong(args[1]);
-            populationSize = 10; // default
-        } else if (args.length >= 3) {
-            // filename + population + seed
-            filename = args[0];
-            populationSize = Integer.parseInt(args[1]);
-            seed = Long.parseLong(args[2]);
+        try {
+            if (args.length == 1) {
+                // hanya filename, maka error butuh seed
+                System.err.println("Error: Seed harus disertakan");
+                System.exit(1);
+            } else if (args.length == 2) {
+                // filename + seed (population size default)
+                filename = args[0];
+                seed = Long.parseLong(args[1]);
+                populationSize = 10; // default
+            } else if (args.length >= 3) {
+                // filename + population + seed
+                filename = args[0];
+                populationSize = Integer.parseInt(args[1]);
+                seed = Long.parseLong(args[2]);
+            }
+        } catch (Exception e){
+            System.err.println("Error: Format has to be java Main <puzzle_file> [population_size] [seed]");
         }
         
         System.out.println("=== MOSAIC PUZZLE INITIALIZATION ===");
@@ -50,8 +54,7 @@ public class Main {
             printResults(population, board, seed);
             
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error: Format has to be java Main <puzzle_file> [population_size] [seed]");
         }
     }
     
