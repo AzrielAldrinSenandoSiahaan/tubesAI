@@ -49,17 +49,16 @@ public class BoardState {
         black = new boolean[size][size];
         variables = new ArrayList<>();
         constraints = new ArrayList<>();
-        
+
         // tandai sel angka sebagai putih dan simpan constraints
         findNumberCells();
-        
+
         // cari sel pasti hitam berdasarkan constraints
         findGuaranteedBlack();
-        
+
         // kumpulkan sel yang belum pasti sebagai variables
         findVariables();
-        
-        // tampilkan info
+
         showInfo();
     }
     
@@ -70,7 +69,10 @@ public class BoardState {
                 if (grid[row][col] >= 0) {  // jika ada angka
                     // simpan constraint
                     constraints.add(new int[]{row, col, grid[row][col]});
-                    
+
+                    // sel angka tidak mungkin hitam
+                    white[row][col] = true;
+
                     // jika angka 0, tetangganya juga putih
                     if (grid[row][col] == 0) {
                         markZeroNeighbors(row, col);
@@ -79,7 +81,7 @@ public class BoardState {
             }
         }
     }
-    
+
     // tandai tetangga angka 0 sebagai putih
     private void markZeroNeighbors(int row, int col) {
         // periksa semua 8 arah sekitar angka 0 dan angka 0 itu sendiri
@@ -95,17 +97,17 @@ public class BoardState {
             }
         }
     }
-    
+
     // cari sel yang pasti hitam
     private void findGuaranteedBlack() {
         for (int[] constraint : constraints) {
             int row = constraint[0];
             int col = constraint[1];
             int number = constraint[2];
-            
+
             // hitung sel non-putih di sekitar constraint
             List<int[]> candidates = new ArrayList<>();
-            
+
             for (int dr = -1; dr <= 1; dr++) {
                 for (int dc = -1; dc <= 1; dc++) {
                     int newRow = row + dr;
@@ -118,7 +120,7 @@ public class BoardState {
                     }
                 }
             }
-            
+
             // jika jumlah kandidat sama dengan angka, semua pasti hitam
             if (candidates.size() == number) {
                 for (int[] pos : candidates) {
@@ -127,7 +129,7 @@ public class BoardState {
             }
         }
     }
-    
+
     // kumpulkan sel yang belum pasti (variables)
     private void findVariables() {
         variables.clear();
@@ -140,6 +142,34 @@ public class BoardState {
                 }
             }
         }
+    }
+
+    /*
+      Mengubah kromosom GA menjadi papan hasil
+      0 = putih, 1 = hitam
+    */
+    public int[][] decodeChromosome(int[] chromosome) {
+        int[][] encodedBoard = new int[size][size];
+
+        // isi sel fixed
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (black[row][col]) {
+                    encodedBoard[row][col] = 1;
+                } else {
+                    encodedBoard[row][col] = 0;
+                }
+            }
+        }
+
+        // isi sel variabel dari kromosom
+        for (int i = 0; i < variables.size(); i++) {
+            int row = variables.get(i)[0];
+            int col = variables.get(i)[1];
+            encodedBoard[row][col] = chromosome[i];
+        }
+
+        return encodedBoard;
     }
     
     // tampilkan informasi papan
